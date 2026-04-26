@@ -5,12 +5,12 @@ pipeline:
 chunking:
   chunk_size: 1000
   chunk_overlap: 200
-  strategy: recursive
+  strategy: recursive       # recursive | sentence | token
 
 retrieval:
   k: 5
-  search_type: hybrid
-  score_threshold: 0.75
+  search_type: hybrid       # vector | keyword | hybrid
+  score_threshold: 0.0
 
 generation:
   temperature: 0.0
@@ -19,6 +19,8 @@ generation:
 evaluation:
   faithfulness_threshold: 0.85
   relevancy_threshold: 0.82
+  precision_threshold: 0.78
+  recall_threshold: 0.80
 
 databricks:
   catalog: catalog
