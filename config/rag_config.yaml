@@ -1,0 +1,28 @@
+pipeline:
+  name: merchant-rag-pipeline
+  version: "1.0.0"
+
+chunking:
+  chunk_size: 1000
+  chunk_overlap: 200
+  strategy: recursive
+
+retrieval:
+  k: 5
+  search_type: hybrid
+  score_threshold: 0.75
+
+generation:
+  temperature: 0.0
+  max_tokens: 1024
+
+evaluation:
+  faithfulness_threshold: 0.85
+  relevancy_threshold: 0.82
+
+databricks:
+  catalog: catalog
+  schema_bronze: bronze
+  schema_silver: silver
+  schema_gold: gold
+  vector_endpoint: rag-prod-endpoint
