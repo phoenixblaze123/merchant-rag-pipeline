@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: pulse
+      POSTGRES_PASSWORD: pulse
+      POSTGRES_DB: pulsecloud
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pulse -d pulsecloud"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    environment:
+      HM_DATABASE_URL: postgresql+psycopg://pulse:pulse@db:5432/pulsecloud
+      HM_JWT_SECRET: ${HM_JWT_SECRET:-dev-only-insecure-secret-change-me-in-prod}
+      HM_FRONTEND_URL: http://localhost:8080
+      HM_CORS_ORIGINS: '["http://localhost:8080"]'
+      HM_STRIPE_SECRET_KEY: ${HM_STRIPE_SECRET_KEY:-}
+      HM_STRIPE_WEBHOOK_SECRET: ${HM_STRIPE_WEBHOOK_SECRET:-}
+      HM_STRIPE_PRICE_BASIC: ${HM_STRIPE_PRICE_BASIC:-}
+      HM_STRIPE_PRICE_PRO: ${HM_STRIPE_PRICE_PRO:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  web:
+    build: ./frontend
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+volumes:
+  pgdata:
